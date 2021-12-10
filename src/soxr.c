@@ -14,6 +14,13 @@
   #include <libavutil/cpu.h>
 #endif
 
+// STEINBERG CHANGES Start ------------------------------------------
+#if 1
+char* GETENV (char const* tmp) { return NULL; } // avoid to use getenv
+#else
+#define GETENV getEnv
+#endif
+// STEINBERG CHANGES End -------------------------------------------
 
 
 #if WITH_DEV_TRACE
@@ -262,8 +269,8 @@ soxr_io_spec_t soxr_io_spec(
   static bool should_use_simd32(void)
   {
     char const * e;
-    return ((e = getenv("SOXR_USE_SIMD"  )))? !!atoi(e) :
-           ((e = getenv("SOXR_USE_SIMD32")))? !!atoi(e) : cpu_has_simd32();
+    return ((e = GETENV("SOXR_USE_SIMD"  )))? !!atoi(e) :
+           ((e = GETENV("SOXR_USE_SIMD32")))? !!atoi(e) : cpu_has_simd32();
   }
 #else
   #define should_use_simd32() true
@@ -299,6 +306,7 @@ soxr_io_spec_t soxr_io_spec(
 
   static bool cpu_has_simd64(void)
   {
+#if !__arm__ && !__aarch64__
     enum {OSXSAVE = 1 << 27, AVX = 1 << 28};
     unsigned eax_, ebx_, ecx_, edx_;
     CPUID(1, eax_, ebx_, ecx_, edx_);
@@ -306,14 +314,15 @@ soxr_io_spec_t soxr_io_spec(
       XGETBV(0, eax_, edx_);
       return (eax_ & 6) == 6;
     }
+#endif
     return false;
   }
 
   static bool should_use_simd64(void)
   {
     char const * e;
-    return ((e = getenv("SOXR_USE_SIMD"  )))? !!atoi(e) :
-           ((e = getenv("SOXR_USE_SIMD64")))? !!atoi(e) : cpu_has_simd64();
+    return ((e = GETENV("SOXR_USE_SIMD"  )))? !!atoi(e) :
+           ((e = GETENV("SOXR_USE_SIMD64")))? !!atoi(e) : cpu_has_simd64();
   }
 #else
   #define should_use_simd64() true
@@ -333,7 +342,7 @@ extern control_block_t
 static void runtime_num(char const * env_name,
     int min, int max, unsigned * field)
 {
-  char const * e = getenv(env_name);
+  char const * e = GETENV(env_name);
   if (e) {
     int i = atoi(e);
     if (i >= min && i <= max)
@@ -346,7 +355,7 @@ static void runtime_num(char const * env_name,
 static void runtime_flag(char const * env_name,
     unsigned n_bits, unsigned n_shift, unsigned long * flags)
 {
-  char const * e = getenv(env_name);
+  char const * e = GETENV(env_name);
   if (e) {
     int i = atoi(e);
     unsigned long mask = (1UL << n_bits) - 1;
@@ -373,7 +382,7 @@ soxr_t soxr_create(
 
 #if WITH_DEV_TRACE
 #define _(x) (char)(sizeof(x)>=10? 'a'+(char)(sizeof(x)-10):'0'+(char)sizeof(x))
-  char const * e = getenv("SOXR_TRACE");
+  char const * e = GETENV("SOXR_TRACE");
   _soxr_trace_level = e? atoi(e) : 0;
   {
     static char const arch[] = {_(char), _(short), _(int), _(long), _(long long)
