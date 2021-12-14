@@ -178,6 +178,11 @@ SOXR char const * soxr_engine(soxr_t);  /* Query resampling engine name. */
 SOXR soxr_error_t soxr_clear(soxr_t); /* Ready for fresh signal, same config. */
 SOXR void         soxr_delete(soxr_t);  /* Free resources. */
 
+/* BEGIN exported for Steinberg */
+SOXR void soxr_input_1ch(soxr_t p, unsigned i, soxr_cbuf_t src, size_t len);
+SOXR size_t soxr_output_1ch(soxr_t p, unsigned i, soxr_buf_t dest, size_t len, bool separated);
+SOXR size_t soxr_i_for_o(soxr_t p, size_t olen, size_t ilen);
+/* END exported for Steinberg */
 
 
 /* `Short-cut', single call to resample a (probably short) signal held entirely

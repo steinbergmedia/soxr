@@ -117,7 +117,10 @@ UNUSED static void fifo_delete(fifo_t * f)
 UNUSED static int fifo_create(fifo_t * f, FIFO_SIZE_T item_size)
 {
   f->item_size = (size_t)item_size;
-  f->allocation = FIFO_MIN;
+  // high value below but do not change FIFO_MIN itself to a higher value
+  // (memmove much more called in ref_4PN07L9 without this change,
+  // and memory allocations while resampling)
+  f->allocation = 16 * 32768;
   fifo_clear(f);
   return !(f->data = FIFO_MALLOC(f->allocation));
 }

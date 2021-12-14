@@ -630,7 +630,7 @@ soxr_error_t soxr_clear(soxr_t p) /* TODO: this, properly. */
 
 
 
-static void soxr_input_1ch(soxr_t p, unsigned i, soxr_cbuf_t src, size_t len)
+void soxr_input_1ch(soxr_t p, unsigned i, soxr_cbuf_t src, size_t len)
 {
   sample_t * dest = resampler_input(p->resamplers[i], NULL, len);
   (*p->deinterleave)(&dest, p->io_spec.itype, &src, len, 1);
@@ -662,7 +662,7 @@ static size_t soxr_input(soxr_t p, void const * in, size_t len)
 
 
 
-static size_t soxr_output_1ch(soxr_t p, unsigned i, soxr_buf_t dest, size_t len, bool separated)
+size_t soxr_output_1ch(soxr_t p, unsigned i, soxr_buf_t dest, size_t len, bool separated)
 {
   sample_t const * src;
   if (p->flushing)
@@ -735,7 +735,7 @@ size_t soxr_output(soxr_t p, void * out, size_t len0)
 
 
 
-static size_t soxr_i_for_o(soxr_t p, size_t olen, size_t ilen)
+size_t soxr_i_for_o(soxr_t p, size_t olen, size_t ilen)
 {
   size_t result;
 #if 0

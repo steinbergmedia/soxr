@@ -6,6 +6,11 @@
 
 #define COEFS ((sample_t const *)p->coefs)
 
+#if __APPLE__
+/* disable - warning: variable 'sum' is uninitialized when used here [-Wuninitialized] */
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
 #if SIMD_SSE
   #define BEGINNING v4_t sum, q1, q2, t
   #define ____ \
