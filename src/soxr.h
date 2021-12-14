@@ -28,6 +28,7 @@
   extern "C" {
 #else
   #include <stddef.h>
+  #include <stdbool.h>
 #endif
 
 #if defined SOXR_DLL
