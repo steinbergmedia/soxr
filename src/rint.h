@@ -56,7 +56,7 @@
     return 0;
   }
 #elif defined _MSC_VER && defined _M_X64
-  #include <emmintrin.h>
+  #include <intrin.h>
   #include <float.h>
   #define FPU_RINT32
   #define FPU_RINT16
